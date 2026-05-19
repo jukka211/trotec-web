@@ -724,19 +724,48 @@
   }
 
   .stat-grid {
+    --card-w: clamp(260px, 28vw, 360px);
+
     position: relative;
     z-index: 2;
+    margin-top: auto;
+
+    /* Horizontal rail */
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--card-w);
     gap: 3rem;
     background: transparent;
-    
-    margin-top: auto;
+
+    /* Break out of the container's side gutter so it can scroll edge-to-edge */
+    margin-inline: calc(var(--gutter) * -1);
+
+    /* Push first card to viewport center; allow last card to reach center too */
+    padding-inline: max(var(--gutter), calc(50vw - var(--card-w) / 2));
+
+    /* Scroll behaviour */
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--gutter), calc(50vw - var(--card-w) / 2));
+    scroll-behavior: smooth;
+
+    /* Hairline scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .25) transparent;
   }
+
+  .stat-grid::-webkit-scrollbar { height: 4px; }
+  .stat-grid::-webkit-scrollbar-track { background: transparent; }
+  .stat-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .25);
+    border-radius: 4px;
+  }
+  .stat-grid:focus-visible { outline: none; }
 
   @media (min-width: 900px) {
     .stat-grid {
-      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
     }
   }
   
@@ -751,6 +780,10 @@
     min-height: 240px;
     transition: background .3s ease;
     border-radius: 8px;
+
+    /* Snap into viewport center on horizontal scroll */
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
   
   .stat:hover {
